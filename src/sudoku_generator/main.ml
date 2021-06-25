@@ -7,15 +7,15 @@ type lc_single = int*variable
 (* linear combination *)
 type lc = lc_single list
 
-let os_list ?(init=true) os op sep cp l =        (* op, cp = opening, closing parentheses *)
+let os_list ?(fst_sep=true) os op sep cp l =        (* op, cp = opening, closing parentheses *)
   let rec aux ?(init=false) res = function
     | [] -> Printf.sprintf "%s%s" res cp
     | [x] -> Printf.sprintf "%s%s%s%s" res sep (os x) cp
     | x::xs -> aux (Printf.sprintf "%s%s%s" res (if init then "" else sep)
                       (os x)) xs
-  in aux ~init op l
+  in aux ~init:fst_sep op l
 
-let os_index_intlist (il : int list) = os_list ~init:false string_of_int "" "_" "" il
+let os_index_intlist (il : int list) = os_list ~fst_sep:false string_of_int "" "_" "" il
 
 let os_var (Var(s,il)) = if s="one" then "1" else
                            Printf.sprintf "%s%s" s (os_index_intlist il)
@@ -249,7 +249,7 @@ let build_sudoku_state n : state =
 
 
 let oc_arguments_test_components variables =
-  os_list ~init:false os_var "" ",\n const blueprint_variable<field_type> &" "" variables
+  os_list ~fst_sep:false os_var "" ",\n const blueprint_variable<field_type> &" "" variables
 
 let oc_arguments_test_components2 variables =
   let rec aux res = function
@@ -259,7 +259,7 @@ let oc_arguments_test_components2 variables =
   aux "" variables
 
 let oc_arguments variables =
-  os_list ~init:false os_var "" "," "" variables
+  os_list ~fst_sep:false os_var "" "," "" variables
 
 
 let oc_state state name =
